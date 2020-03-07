@@ -1,2 +1,2 @@
 # LearnCpp
-Note lại lý thuyết C++ đang học kì này
+Note lại lý thuyết C++ trong môn kĩ thuật lập trình.
