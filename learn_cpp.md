@@ -512,3 +512,234 @@ Difference between pointers and reference: both of them are used to change the v
 - - Once the reference is created, it can not be refer to other objects.
 - - Reference cannot be ``NULL``.
 - - Reference must be initialize when created.
+### 5. File manipulation in C++
+To read or write to a file, use ``ifstream`` or ``ofstream`` object. You must include ``ifstream`` package.  
+To read or write file, you must open file. Here's how you can open file in Cpp:  
+``void open(const char *filename, ios::openmode);``
+There are many modes for manipulating, but usually i only use 2 modes: ``ios::out`` for writing to files or 
+``ios::in`` for reading from files.  
+To read from file, use ``>>`` operator like in ``cin``. To write to file, use ``<<`` like in ``cout``.
+Here's the basic programming with files:
+```C++
+#include <iostream>
+#include <fstream>
+using namespace std;
+class Contestant{
+    public:
+       string name;
+       int age,rating;
+    void input(){
+        ofstream outfile;//outfile object to write to file
+        outfile.open("input.txt",ios::out);//open file in output mode
+        Contestant obj;
+        obj.name="Chou";
+        obj.age=21;
+        obj.rating=8;
+        outfile<<obj.name<<" "<<obj.age<<" "<<obj.rating<<endl;//write to file like cout
+        obj.name="Tanvh";
+        obj.age=18;
+        obj.rating=7;
+        outfile<<obj.name<<" "<<obj.age<<" "<<obj.rating;//write to file like cout
+        outfile.close();//close file
+    }
+    void output(){
+        ifstream infile;//infile object to read from file
+        infile.open("input.txt",ios::in);//open file in input mode
+        string name;
+        int age,rating;
+        while(!infile.eof()){//check if at the end of file
+            infile>>name>>age>>rating;//read from file like cin
+            cout<<name<<" "<<age<<" "<<rating<<endl;
+        }
+        infile.close();
+    }
+};
+int main()
+{
+    Contestant c;
+    c.output();
+    return 0;
+}
+```
+To close a file, just use ``close()`` method.
+### 6. Handle Exception C++.
+``try``:represent a block that can throw exception.  
+``catch``: represent a block is executed when an exception is thrown.  
+``throw``: Used to throw an exception.
+```C++
+int main(){
+    int x=-1;
+    cout<<"Before try"<<endl;
+    try{
+        cout<<"Inside try"<<endl;
+        if(x<0){
+            throw x;//throw exception
+            cout<<"After throw"<<endl;
+        }
+    }
+    catch (int x){
+        cout<<"Exception caught"<<endl;
+    }
+    cout<<"After catch"<<endl;
+    return 0;
+}
+```
+There is a special ``catch`` block called catch all. It's used for catching all types of Exception. For example:
+```C++
+int main(){
+    int x=-1;
+    cout<<"Before try"<<endl;
+    try{
+        cout<<"Inside try"<<endl;
+        if(x<0){
+            throw x;//throw exception
+            cout<<"After throw"<<endl;
+        }
+    }
+    catch (...){
+        cout<<"Exception caught"<<endl;
+    }
+    cout<<"After catch"<<endl;
+    return 0;
+}
+```
+If an exception is thrown and is not caught anywhere, the program terminated abnormally.  
+A derived exception should be caught before catching the base exception.  
+Like ``Java``, ``C++`` has a standard exception class for handle exception. For further details, see [here](http://www.cplusplus.com/reference/exception/exception/)  
+In ``C++``, try-catch block can be nested.  
+When an exception is thrown, all objects created inside enclosing block are destructed before the control is 
+transfer to catch block.
+### 7. Namespace
+Namespace is an additional feature in C++ (compare to C) for tackling same variable names problem.  
+```C++
+int main(){
+    int value=10;
+    double value;//this is not allow, we only use 1 name for value
+}
+```
+Namespace is the solution of that problem. This is an example of how namespace works:
+```C++
+namespace ns{
+    int val=500;
+}
+int main(){
+    int val=700;
+    ns::val=600;
+    cout<<val<<endl;
+    cout<<ns::val<<endl;
+}
+```
+Notice that namespace declaration only appears at global scope.  
+Namespace declaration can be nested in other namespace, namespace declaration doesn't have access modifier.  
+```C++
+namespace ns1{
+    int value(int x){return 2*x;}
+}
+namespace ns2{
+    float value(float x){return 3*x;}
+}
+int main(){
+    cout<<ns1::value(5)<<endl;
+    cout<<ns2::value(4.5)<<endl;
+    return 0;
+}
+```
+You can define a function in namespace like above.  
+You can also define a class in namespace.  
+```C++
+namespace ns1
+{
+    class A{
+        public:
+           void disp();
+    };    
+}
+void ns1::A::disp(){cout<<"HelloWorld"<<endl;}
+int main(){
+    ns1::A obj;
+    obj.disp();
+    return 0;
+}
+```
+### 8.Pointer in C++
+Pointer is a variable in C++. It stores the address of other variables in C++. It's is one of the strongest tool in C++.  
+The declaration of pointer:  
+``type *variable_name``  
+You can assign pointer point to a variable's address by ``&`` operand. The value of ptr is the address of x. You can also access the value of x by ``*`` operand. For example:
+```C++
+int x=10;
+int ptr=&x;
+cout<<"The address of x "<<ptr<<endl;
+cout<<"The value of x "<<*ptr<<endl;
+```
+You can add/substract pointer by an integer value. If you do that, pointers will gain value, and points to the address after/before x by the incrementing value bytes.  
+When substract the pointer value, it shows us the distance between 2 pointers.  
+You can change the value of variable ``x`` pointer points to by ``*`` operand. For example:
+```C++
+int x=10;
+int ptr=&x;
+*ptr=2;
+cout<<"The value of x is "<<x<<endl;
+```
+The name of array can be assigned to a pointer. For example:  
+```C++
+int a[3]={1,2,3};
+int* ptr=a;
+for(int i=0;i<3;i++)cout<<ptr[i]<<endl;
+```
+In C/C++, ptr[i] is converted as *(ptr+i).  
+You can pass a pointer to a function to undirectly change the value of the outside variable.  
+```C++
+void swap(int *x, int *y){
+    temp=*x;//assign the value of the address x points to
+    (*x)=(*y);
+    *y=temp;
+}
+int main(){
+    int x=3,y=5;
+    swap(&x,&y);//pass pointer to function
+    cout<<x<<" "<<y<<endl;
+    return 0;
+}
+```
+Pointer can be used to refer to ``struct`` and ``class``:
+```C++
+class coordinate{
+    public:
+      float x,y;
+      coordinate(float x_val,float y_val){x=x_val;y=y_val;}
+      float length(){
+          return sqrt(x*x+y*y); 
+      }
+};
+int main()
+{
+    coordinate coord(2.4,3.5);
+    coordinate *ptr=&coord;//pointer to coordinate
+    //acess x and y field
+    cout<<ptr->x<<endl;
+    cout<<ptr->y<<endl;
+    cout<<ptr->length()<<endl;
+    return 0;
+}
+```
+**Function pointer:**  
+We have pointer to function. For example:  
+```C++
+void function(int a){
+    cout<<"The value "<<a<<endl;
+}
+int main(){
+    void (*func_ptr)(int)=&function;
+    (*func_ptr)(10);
+    return 0;
+}
+```
+We cannot allocate memory by function pointers.  
+A function name can be used to get the function address.  
+```C++
+int main(){
+    void (*func_ptr)(int)=function;//remove the & operand
+    func_ptr(10);//remove the * operand
+}
+```
